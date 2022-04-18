@@ -1,15 +1,11 @@
-import imageio      # importujemy moduł tworzący plik gif
-import pylab        # importujemy moduł odpowiedzialny za rysowanie wykresów
-from pylab import * # z wcześniej zaimportowanego modułu importujemy wszystko aby szybciej działać
-import random       # importujemy moduł, który wykorzystamy przy generowaniu liczb losowych
-import time         # importujemy moduł, który policzy jak długo trwa rysowanie w najbardziej zagnieżdżonej pętli oraz policzy całowity czas działania programu
-import os           # importujemy moduł, który pozwoli nam zmienić ścieżkę domową
+import matplotlib.pyplot as plt
+import imageio
+import random
+import time
 
 
 def gif(dlugosc, szybkosc, rozmiar): # definiujemy funkcję tworzenie pliku gif
   '''funkcja ta tworzy plik gif należy podać długość tego pliku(liczba obrazków), szybkość przechodzenia z 1 pliku na kolejny oraz rozmiar planszy'''
-  glowna = 0                         # zmienna, do której będziemy zapisywać czas, który spędzamy w zagnieżdżonej pętli
-  zapis = 0                          # zmienna, do której będziemy zapisywać czas, który spędzamy na zapisie plików
 
   kierunek = 's'                     # na początku zaczynamy jako kwadrat
   sztuczka = 0                       # zmienna, która znormalizuje ruch naszego agenta
@@ -23,14 +19,13 @@ def gif(dlugosc, szybkosc, rozmiar): # definiujemy funkcję tworzenie pliku gif
   e = []                             # wspołrzędne y przed pierwszym przejsciem poza granicę planszy
   lista = []                         # zmienna zawierająca wszystkie współrzędne list powstałych po pierwszym przejściu przez granicę planszy
   kolory = [(random.random(), random.random(), random.random())]             # zmienna zawierająca kolory wykresów
-  os.chdir('/home/urgith/Pulpit/studia/semestr 2/Python/lista_4')            # zmieniamy ścieżkę dostępu
 
   for i in range(dlugosc):                                                   # główna pętla generująca obrazki formatu .png
-    fig, ax = plt.subplots()                                                 # tworzymy zmienną, która przechowuje nasze obrazki
-    xticks(range(-rozmiar, rozmiar + 1))
-    yticks(range(-rozmiar, rozmiar + 1))
-    c = axis([-rozmiar - 0.5, rozmiar + 0.5, -rozmiar - 0.5, rozmiar + 0.5]) # tworzymy stabilny obszar w zakresie [(-4,4)x(-4,4)]
-    grid(True)                                                               # tworzymy siatkę wykresu
+    fig, _ = plt.subplots()                                                 # tworzymy zmienną, która przechowuje nasze obrazki
+    plt.xticks(range(-rozmiar, rozmiar + 1))
+    plt.yticks(range(-rozmiar, rozmiar + 1))
+    c = plt.axis([-rozmiar - 0.5, rozmiar + 0.5, -rozmiar - 0.5, rozmiar + 0.5]) # tworzymy stabilny obszar w zakresie [(-4,4)x(-4,4)]
+    plt.grid(True)                                                               # tworzymy siatkę wykresu
 
     if przejscie >= 1:                                                       # jeżeli conajmniej raz przeszliśmy przez siatkę, to:
       for j in range(len(lista)):                                            # pętla dodająca nowe kolory
@@ -47,17 +42,17 @@ def gif(dlugosc, szybkosc, rozmiar): # definiujemy funkcję tworzenie pliku gif
           wspolrzednex.append(lista[l][j][0])                                # x
           wspolrzedney.append(lista[l][j][1])                                # y
 
-        plot(wspolrzednex, wspolrzedney, 'o:', color=kolory[l + 1], linewidth=2, markersize=5)            # rysujemy ślad dla każdego podwykresu z zaznaczeniem miejsc końcowych
-        plot(lista[przejscie - 1][-1][0], lista[przejscie - 1][-1][1], kierunek, Color='k', markersize=8) # rysujemy agenta na aktualnie zajmowanej pozycji
+        plt.plot(wspolrzednex, wspolrzedney, 'o:', color=kolory[l + 1], linewidth=2, markersize=5)            # rysujemy ślad dla każdego podwykresu z zaznaczeniem miejsc końcowych
+        plt.plot(lista[przejscie - 1][-1][0], lista[przejscie - 1][-1][1], kierunek, color='k', markersize=8) # rysujemy agenta na aktualnie zajmowanej pozycji
 
     else:                                                        # jeżeli jeszcze nie przeszliśmy poza siatkę, to:
       d.append(x)                                                # dodajemy do listy współrzędnych x
       e.append(y)                                                # dodajemy do listy współrzędnych y
 
-    plot(d, e, 'o:', color=kolory[0], linewidth=2, markersize=5) # rysujemy pierwszą linię wraz z miejscem końcowym, której elementów było coraz więcej aż do pierwszego przejścia
+    plt.plot(d, e, 'o:', color=kolory[0], linewidth=2, markersize=5) # rysujemy pierwszą linię wraz z miejscem końcowym, której elementów było coraz więcej aż do pierwszego przejścia
 
     try:                                                         # próbuj rysować agenta:
-      plot(d[i], e[i], kierunek, Color='k', markersize=8)
+      plt.plot(d[i], e[i], kierunek, Color='k', markersize=8)
     except:                                                      # jeżeli przekroczymy zakres(przejdziemy pierwszy raz poza granicę), to:
       pass                                                       # nic nie rób(nie rysuj już agenta)
 
@@ -114,7 +109,7 @@ def gif(dlugosc, szybkosc, rozmiar): # definiujemy funkcję tworzenie pliku gif
         przejscie += 1
 
     fig.savefig('filename' + str(i) + '.png')          # zapisujemy wszystkie powstałe pliki(to jest w pętli głównej)
-    close('all')                                       # zamykamy plik, który wcześniej zapisalismy, aby zużywać zdecydowanie mniej pamięci
+    plt.close('all')                                       # zamykamy plik, który wcześniej zapisalismy, aby zużywać zdecydowanie mniej pamięci
 
   pliki = []                                           # tworzymy listę z plikami
   for i in range(dlugosc):
@@ -123,8 +118,8 @@ def gif(dlugosc, szybkosc, rozmiar): # definiujemy funkcję tworzenie pliku gif
   otwarte_pliki = []
   for i in range(len(pliki)):
     otwarte_pliki.append(imageio.imread(pliki[i]))     # otwieramy pliki, które zapiszemy jako plik gif
-  imageio.mimsave('/home/urgith/Pulpit/studia/semestr 2/Python/lista_4/koniec.gif', otwarte_pliki, duration=szybkosc) # tworzymy plik gif
+  imageio.mimsave('koniec.gif', otwarte_pliki, duration=szybkosc) # tworzymy plik gif
 
 start = time.time()                                    # tu rozpoczyna się nasz program
-gif(500, 0.1, 10)                                      # odpalamy program
+gif(100, 0.1, 8)                                       # odpalamy program
 print('Tyle trwał nasz program:', time.time() - start) # pauzujemy stoper
